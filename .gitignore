@@ -1,0 +1,64 @@
+# --- Keys and personal settings: never commit ---
+.env
+*.env
+keys.json
+
+# --- Optional trader-* skill scripts: kept locally, not published ---
+skills/
+
+# --- What the bot writes while it runs (your trading history stays on your PC) ---
+bot.log
+*_console.log
+app.log
+journal.csv
+shadow.csv
+llm_log.jsonl
+bot_state.json
+bot_state_dryrun.json
+advisor_state.json
+inputs.json
+heartbeat.json
+watchdog.json
+dashboard_pids.json
+automation.json
+STOP
+PAUSE
+daily_inputs/
+state_history/
+trader/
+.window/
+
+# --- Backtest outputs and caches (re-created by the scripts) ---
+bt_cache/
+backtest_trades*.csv
+backtest_summary*.json
+backtest_report*.txt
+
+# --- Research data and nightly-learning output (large / personal) ---
+research/data/
+research/train/
+research/qqq2020/
+research/notes/
+research/lessons.json
+research/forward_ledger.csv
+research/daily_state.json
+research/daily_last.log
+research/*.tmp
+
+# --- Files the tests leave behind ---
+t_*.json
+t_*.jsonl
+t_*.csv
+test_state.json
+test_inputs.json
+
+# --- Python and build output ---
+__pycache__/
+*.py[cod]
+.pytest_cache/
+venv/
+.venv/
+build/
+dist/
+build_env/
+*.zip

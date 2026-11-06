@@ -1,0 +1,106 @@
+#!/usr/bin/env bash
+# orbctl - control the ORB bot on the server.  Run "orbctl" with no arguments for help.
+set -uo pipefail
+DIR="$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)"
+ENVF="$HOME/.config/orb-bot/env"
+SC=(systemctl --user)
+PY="$DIR/.venv/bin/python"
+
+state() { "${SC[@]}" is-active "$1" 2>/dev/null || true; }
+
+need_keys() {
+  local missing=()
+  for k in ALPACA_API_KEY ALPACA_SECRET_KEY ANTHROPIC_API_KEY; do
+    grep -Eq "^${k}=.+" "$ENVF" 2>/dev/null || missing+=("$k")
+  done
+  if ((${#missing[@]})); then
+    echo "Missing in $ENVF: ${missing[*]}"
+    echo "Fix it with:  orbctl keys"
+    exit 1
+  fi
+}
+
+with_env() { set -a; . "$ENVF"; set +a; cd "$DIR" && "$PY" "$@"; }
+
+case "${1:-help}" in
+  start)        # paper orders; comes back by itself after a reboot
+    need_keys
+    "${SC[@]}" enable --now orb-watchdog.service
+    "${SC[@]}" enable --now orb-bot.service
+    echo "Bot started with PAPER orders, watchdog on (auto-close). Check it with: orbctl status"
+    ;;
+  dry)          # dry run, no orders; not restarted after a reboot
+    need_keys
+    "${SC[@]}" disable orb-bot.service >/dev/null 2>&1
+    "${SC[@]}" start orb-bot-dry.service
+    "${SC[@]}" enable --now orb-watchdog.service
+    echo "Bot started as a DRY RUN (no orders)."
+    ;;
+  stop)         # same as the STOP file: close all positions, then exit
+    "${SC[@]}" disable orb-bot.service >/dev/null 2>&1
+    if [[ "$(state orb-bot.service)" != active && "$(state orb-bot-dry.service)" != active ]]; then
+      echo "The bot is not running."; rm -f "$DIR/STOP"; exit 0
+    fi
+    echo "stopped with orbctl" > "$DIR/STOP"
+    echo -n "Stop requested: closing all positions"
+    for _ in $(seq 1 90); do
+      if [[ "$(state orb-bot.service)" != active && "$(state orb-bot-dry.service)" != active ]]; then
+        echo; echo "Bot stopped. All positions were closed. It stays off until: orbctl start"; exit 0
+      fi
+      echo -n "."; sleep 2
+    done
+    echo; echo "The bot did not exit within 3 minutes. Forcing it off (its stops stay at Alpaca)."
+    "${SC[@]}" stop orb-bot.service orb-bot-dry.service
+    ;;
+  kill)         # stop at once, positions NOT closed (their stop and target stay at Alpaca)
+    "${SC[@]}" disable --now orb-bot.service >/dev/null 2>&1
+    "${SC[@]}" stop orb-bot-dry.service
+    echo "Bot force-stopped. Open positions keep their stop-loss and target at Alpaca."
+    ;;
+  restart)      # pick up code changes
+    need_keys
+    if [[ "$(state orb-bot-dry.service)" == active ]]; then "${SC[@]}" restart orb-bot-dry.service
+    else "${SC[@]}" enable orb-bot.service >/dev/null 2>&1; "${SC[@]}" restart orb-bot.service; fi
+    "${SC[@]}" restart orb-watchdog.service orb-dashboard.service
+    echo "Restarted."
+    ;;
+  status)
+    printf "%-12s %s\n" bot "$(state orb-bot.service) (paper)  /  $(state orb-bot-dry.service) (dry run)" \
+      watchdog "$(state orb-watchdog.service)" dashboard "$(state orb-dashboard.service)"
+    [[ -f "$DIR/STOP" ]] && echo "STOP file present: the bot is closing positions and exiting."
+    echo; echo "Latest status line:"
+    grep "STATUS\|Market closed" "$DIR/bot.log" 2>/dev/null | tail -1 || echo "(no bot.log yet)"
+    echo; echo "Last 5 log lines:"; tail -5 "$DIR/bot.log" 2>/dev/null
+    ;;
+  log|logs)     tail -n 60 -f "$DIR/bot.log" ;;
+  errors)       grep -E "WARNING|ERROR|CRITICAL" "$DIR/bot.log" | tail -n 40 ;;
+  keys)         ${EDITOR:-nano} "$ENVF"; chmod 600 "$ENVF"
+                echo "Saved. Run 'orbctl restart' if the bot was already running." ;;
+  test-alerts)  with_env notify.py check && with_env notify.py test ;;
+  tests)        cd "$DIR" && "$PY" -m pytest -q -p no:cacheprovider ;;
+  journal)      shift; with_env journal.py "$@" ;;
+  evaluate)     with_env evaluate.py ;;
+  update)       # after uploading new code
+    cd "$DIR" && "$PY" -m pip install -q -r requirements.txt && "$PY" -m pytest -q -p no:cacheprovider \
+      && exec "$0" restart
+    echo "Tests failed: nothing was restarted. The old code is still running."; exit 1
+    ;;
+  *)
+    cat <<'HELP'
+orbctl - control the ORB bot
+
+  orbctl start         start trading with PAPER orders (and keep it on after reboots)
+  orbctl dry           start a dry run (no orders)
+  orbctl stop          close all positions and stop (the STOP file; stays off until 'start')
+  orbctl kill          stop at once; positions keep their stops at Alpaca
+  orbctl status        what is running + the latest status line
+  orbctl log           follow the bot log live (Ctrl+C to leave; the bot keeps running)
+  orbctl errors        recent warnings and errors
+  orbctl keys          edit the API keys file
+  orbctl test-alerts   send a Telegram test message
+  orbctl journal       trade journal          orbctl evaluate   success-criteria verdict
+  orbctl tests         run the test suite     orbctl update     install + test + restart after new code
+  orbctl restart       restart everything (picks up code changes)
+HELP
+    ;;
+esac

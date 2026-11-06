@@ -1,0 +1,14 @@
+[Unit]
+Description=ORB watchdog - closes all positions if the bot goes silent while the market is open
+
+[Service]
+Type=simple
+WorkingDirectory=@DIR@
+EnvironmentFile=%h/.config/orb-bot/env
+Environment=PYTHONUNBUFFERED=1 PYTHONUTF8=1
+ExecStart=@DIR@/.venv/bin/python watchdog.py --flatten
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=default.target

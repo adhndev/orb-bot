@@ -1,0 +1,8 @@
+# Tested together on Linux (Python 3.13) on 2026-11-06, all tests passing.
+alpaca-py>=0.44,<0.45
+anthropic>=2.3,<3
+pandas>=2.2
+requests>=2.32
+pytest>=8
+truststore>=0.10
+keyring>=25

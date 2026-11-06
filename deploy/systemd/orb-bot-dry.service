@@ -1,0 +1,21 @@
+[Unit]
+Description=ORB bot - DRY RUN, no orders (orb_bot.py)
+Conflicts=orb-bot.service
+StartLimitIntervalSec=900
+StartLimitBurst=6
+
+[Service]
+Type=simple
+WorkingDirectory=@DIR@
+EnvironmentFile=%h/.config/orb-bot/env
+Environment=PYTHONUNBUFFERED=1 PYTHONUTF8=1
+ExecStart=@DIR@/.venv/bin/python orb_bot.py
+# A crash is restarted after 30 s. A STOP file makes the bot exit cleanly, and a clean exit is NOT restarted.
+Restart=on-failure
+RestartSec=30
+# Same as Ctrl-C on Windows: positions keep their stop and target at Alpaca; the watchdog covers the rest.
+KillSignal=SIGINT
+TimeoutStopSec=30
+
+[Install]
+WantedBy=default.target

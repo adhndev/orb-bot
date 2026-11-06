@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-27",
+  "trade_today": true,
+  "max_trades": 2,
+  "note": "Why these names today (for your own log).",
+  "symbols": [
+    {"symbol": "NVDA", "trigger": 142.50, "max_loss_usd": 150},
+    {"symbol": "AMD"}
+  ]
+}

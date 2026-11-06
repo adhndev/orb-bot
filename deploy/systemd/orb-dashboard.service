@@ -1,0 +1,14 @@
+[Unit]
+Description=ORB dashboard on 127.0.0.1:8765 (reach it through an SSH tunnel)
+
+[Service]
+Type=simple
+WorkingDirectory=@DIR@
+EnvironmentFile=%h/.config/orb-bot/env
+Environment=PYTHONUNBUFFERED=1 PYTHONUTF8=1 ORB_SYSTEMD=1 BROWSER=true
+ExecStart=@DIR@/.venv/bin/python dashboard.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=default.target

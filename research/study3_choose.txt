@@ -1,0 +1,16 @@
+STUDY 3 - choose. 1032 variants x 26 stocks. Discovery 2016-01-01..2021-12-31
+
+Discovery: 1511 days. Variants with >= 300 trades: 1032. Positive avg R after costs: 55
+  F10_rel_strength   best: avg R -0.007, t -0.38, 6187 trades | family median avg R -0.043
+  F1_orb             best: avg R -0.049, t -2.58, 19052 trades | family median avg R -0.095
+  F2_fade            best: avg R -0.221, t -10.66, 15282 trades | family median avg R -0.229
+  F3_vwap_pullback   best: avg R -0.105, t -6.50, 21518 trades | family median avg R -0.152
+  F4_vwap_stretch    best: avg R +0.009, t +0.23, 1182 trades | family median avg R -0.129
+  F5_gap             best: avg R +0.168, t +3.31, 1219 trades | family median avg R -0.067
+  F6_momentum        best: avg R -0.159, t -8.49, 7582 trades | family median avg R -0.117
+  F7_prior_break     best: avg R -0.051, t -2.78, 9521 trades | family median avg R -0.094
+  F8_late_trend      best: avg R -0.051, t -1.45, 1126 trades | family median avg R -0.110
+  F9_rsi5            best: avg R -0.048, t -0.66, 1568 trades | family median avg R -0.101
+
+Luck test (White's Reality Check, 1032 variants): best t 3.31, p = 0.149
+STOP: the best variant is not better than luck across this many tries. Nothing goes to validation.

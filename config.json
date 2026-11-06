@@ -1,0 +1,170 @@
+{
+  "sec_user_agent": "Your Name your.email@example.com",
+  "budget": 25000,
+  "cash_buffer_pct": 10,
+  "max_position_pct": 40,
+  "max_order_usd": 10000,
+  "max_loss_per_trade_usd": 250,
+  "max_daily_loss_usd": 500,
+  "max_trades_per_day": 3,
+  "max_open_positions": 2,
+  "or_minutes": 15,
+  "min_or_bars": 8,
+  "min_range_pct": 0.3,
+  "max_range_pct": 3.0,
+  "max_extension_of_range": 0.5,
+  "min_risk_pct": 0.1,
+  "reward_risk": 2.0,
+  "no_entries_before": "09:45",
+  "no_entries_after": "15:30",
+  "flat_by": "15:55",
+  "poll_seconds": 20,
+  "blocked": [],
+  "min_price": 5,
+  "universe": [
+    "SPY",
+    "QQQ",
+    "AAPL",
+    "MSFT",
+    "NVDA",
+    "AMD",
+    "TSLA",
+    "AMZN",
+    "META",
+    "GOOGL",
+    "NFLX",
+    "AVGO",
+    "PLTR",
+    "MU",
+    "BAC",
+    "JPM",
+    "COIN",
+    "UBER",
+    "SHOP",
+    "INTC",
+    "XOM",
+    "LLY",
+    "ORCL",
+    "CRM"
+  ],
+  "llm": {
+    "premarket_model": "claude-sonnet-5-5",
+    "intraday_model": "claude-haiku-5-5",
+    "premarket_time": "09:00",
+    "intraday_minutes": 5,
+    "max_calls_per_day": 250,
+    "max_spend_usd_per_day": 3.0,
+    "prices_per_mtok": {
+      "premarket_model": [
+        2.0,
+        10.0
+      ],
+      "intraday_model": [
+        0.1,
+        0.5
+      ]
+    }
+  },
+  "flatten_stale_positions": true,
+  "fast_monitor_seconds": 3,
+  "emergency_loss_multiple": 1.5,
+  "one_per_sector": true,
+  "sectors": {
+    "SPY": "index",
+    "QQQ": "index",
+    "AAPL": "mega_tech",
+    "MSFT": "mega_tech",
+    "GOOGL": "mega_tech",
+    "AMZN": "mega_tech",
+    "META": "mega_tech",
+    "NVDA": "semis",
+    "AMD": "semis",
+    "AVGO": "semis",
+    "MU": "semis",
+    "INTC": "semis",
+    "TSLA": "autos",
+    "PLTR": "software",
+    "ORCL": "software",
+    "CRM": "software",
+    "SHOP": "software",
+    "NFLX": "media",
+    "UBER": "consumer_tech",
+    "COIN": "crypto",
+    "BAC": "financials",
+    "JPM": "financials",
+    "XOM": "energy",
+    "LLY": "healthcare"
+  },
+  "blackout": {
+    "_help": "Whole days with no trading, and stock-specific days (e.g. its earnings date). YYYY-MM-DD. YOU maintain this. Dates marked unverified: check federalreserve.gov.",
+    "dates": [
+      "2026-01-28",
+      "2026-03-18",
+      "2026-04-29",
+      "2026-06-17",
+      "2026-07-29",
+      "2026-09-16",
+      "2026-12-09"
+    ],
+    "dates_note": "FOMC decision days. Oct 28 is confirmed by several sources. Dec 9: most sources say Dec 8-9, one says Dec 16, so check federalreserve.gov. Past 2026 dates are listed so the backtester skips the same days the live bot would. Add earlier years' dates yourself to make a longer backtest honest.",
+    "symbols": {}
+  },
+  "backtest": {
+    "slippage_bps": 3,
+    "min_slippage_usd": 0.01
+  },
+  "skills": {
+    "_help": "The bot runs your trader-* skill scripts. dir = folder holding trader-scanner, trader-news, ... (copies are included). Set a REAL name+email in sec_user_agent (SEC requires it) for filings and earnings data.",
+    "enabled": true,
+    "dir": "skills",
+    "timeout_s": 45,
+    "scanner": true,
+    "news": true,
+    "analyst": true,
+    "timemachine": true,
+    "size_check": true,
+    "risk_check": true,
+    "block_important_filing_hours": 18,
+    "block_on_strongly_toward_stop": true,
+    "max_timemachine_runs_per_cycle": 2
+  },
+  "notify": {
+    "_help": "Telegram alerts. Needs TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID in the environment (see notify.py). Never put the token in this file.",
+    "enabled": true,
+    "max_per_hour": 30
+  },
+  "watchdog": {
+    "_help": "watchdog.py is a separate program. It alerts if the bot's heartbeat goes stale during market hours; with --flatten it also closes all positions after flatten_after_seconds.",
+    "stale_seconds": 240,
+    "flatten_after_seconds": 600,
+    "poll_seconds": 30
+  },
+  "realtime": {
+    "_help": "Event-driven mode: live 1-minute bars, live news and your order updates arrive over websockets (free IEX feed), so the bot reacts within seconds instead of every 20. gate = Claude gets a last veto/shrink on each breakout; position_review = Claude may close a position on breaking news. Turn any off with false. If a feed dies the bot falls back to 20-second polling.",
+    "enabled": true,
+    "bars": true,
+    "news": true,
+    "trade_updates": true,
+    "gate": true,
+    "gate_on_error": "veto",
+    "position_review": true,
+    "stream_stale_seconds": 150
+  },
+  "learning": {
+    "_help": "Nightly learning (research/daily.py, started by the dashboard at 16:20 New York): adds the day's data, forward-tests the strategy candidates, and Claude reviews the day and keeps lessons. use_lessons = show the active lessons to Claude's premarket call as hints; they never change risk limits or rules.",
+    "use_lessons": true
+  },
+  "strategy": "gap_fade",
+  "gap_fade": {
+    "_help": "Gap-down reversion (strategies.py; research: study 3). Buys stocks that open min_gap_pct+ below yesterday's close, at the first minute's close; stop atr_k x ATR(14) below; target rr x risk. Entries only until last_entry. risk_skill = settings the trader-risk skill uses in this mode (entries from 09:31; reward:risk floor 0.9 so cent rounding cannot block a planned 1R trade). Set strategy back to \"orb\" to return to the opening-range breakout.",
+    "min_gap_pct": 2.0,
+    "atr_k": 0.2,
+    "rr": 1.0,
+    "last_entry": "09:34",
+    "atr_days": 14,
+    "risk_skill": {
+      "no_entries_before": "09:31",
+      "min_reward_risk": 0.9
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "written": "2026-10-29",
+  "why": "The 10 best discovery variants (and the pick, if any), tracked on every new day by daily.py. New days are data none of them was chosen on.",
+  "variants": [
+    {
+      "i": 763,
+      "name": "F5_gap(2.0, -1, 0, 0.2, 1, 0, 1)"
+    },
+    {
+      "i": 765,
+      "name": "F5_gap(2.0, -1, 0, 0.2, 2, 0, 1)"
+    },
+    {
+      "i": 762,
+      "name": "F5_gap(2.0, -1, 0, 0.2, 1, 0, 0)"
+    },
+    {
+      "i": 764,
+      "name": "F5_gap(2.0, -1, 0, 0.2, 2, 0, 0)"
+    },
+    {
+      "i": 767,
+      "name": "F5_gap(2.0, -1, 0, 0.2, 3, 0, 1)"
+    },
+    {
+      "i": 771,
+      "name": "F5_gap(2.0, -1, 0, 0.4, 1, 0, 1)"
+    },
+    {
+      "i": 773,
+      "name": "F5_gap(2.0, -1, 0, 0.4, 2, 0, 1)"
+    },
+    {
+      "i": 749,
+      "name": "F5_gap(2.0, 1, 14, 0.2, 0, 0, 1)"
+    },
+    {
+      "i": 761,
+      "name": "F5_gap(2.0, -1, 0, 0.2, 0, 0, 1)"
+    },
+    {
+      "i": 766,
+      "name": "F5_gap(2.0, -1, 0, 0.2, 3, 0, 0)"
+    }
+  ]
+}

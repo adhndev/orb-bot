@@ -1,0 +1,29 @@
+{
+  "written_on": "2026-10-29",
+  "strategy": "gap_fade",
+  "start_date": "2026-10-29",
+  "purpose": "Written BEFORE the gap-down strategy placed a single trade, so the bar cannot be moved after seeing results. evaluate.py fingerprints this file (criteria_gap.lock) the first time it runs and warns if it changes.",
+  "what_it_is": "research/lab.py F5_gap(2.0, -1, 0, 0.2, 1, 0, 1): buy stocks that open 2%+ below yesterday's close at the first minute's close, stop 0.2 x ATR(14), target 1R, long only; Claude may veto on news. Study 3 discovery (2016-2021, 26 stocks): +0.168R over 1,219 trades after costs, but the luck test was not passed (p = 0.149), so this is an experiment, not a proven edge.",
+  "paper": {
+    "min_trades": 60,
+    "min_trading_days": 30,
+    "min_avg_r": 0.1,
+    "min_profit_factor": 1.2,
+    "max_drawdown_usd": 2000,
+    "min_prob_edge_positive": 0.9
+  },
+  "forward": {
+    "variant": "F5_gap(2.0, -1, 0, 0.2, 1, 0, 1)",
+    "min_trades": 100,
+    "min_avg_r": 0.05
+  },
+  "claude_vs_unfiltered": {
+    "min_trades_each": 30,
+    "min_avg_r_advantage": 0.0
+  },
+  "how_to_read_the_verdict": {
+    "KEEP RUNNING": "Not enough trades yet. This is NOT a failure. Change nothing and keep collecting results.",
+    "FAILED": "Enough data and at least one bar missed. Do not go near real money with this strategy. Any rule change is a new experiment with a new frozen criteria file.",
+    "MET": "Every bar cleared on enough data: paper trades, the unfiltered forward test, and Claude's veto not hurting. That earns a discussion about a very small real-money trial with tight limits. It proves nothing about the future."
+  }
+}
